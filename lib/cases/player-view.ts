@@ -21,7 +21,7 @@ export function playerView(c: MysteryCase, state: {
     suspects: c.truth.suspects.map(s => ({ id: s.id, name: s.name, publicBio: s.publicBio })),
     evidence: evidence.map(e => ({ id: e.id, title: e.title, kind: e.kind, content: e.content, source: e.source })),
     deductions: c.dossier.deductions.filter(d => d.requiredEvidenceIds.every(id => visible.has(id)))
-      .map(d => ({ id: d.id, question: d.question, choices: d.choices })),
+      .map(d => ({ id: d.id, question: d.question, choices: d.choices, solved: solved.has(d.id) })),
   };
 }
 

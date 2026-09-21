@@ -17,14 +17,18 @@ export async function startSoloInvestigation(formData: FormData) {
   const { data: claimsData } = await supabase.auth.getClaims();
   if (!claimsData?.claims) redirect("/");
 
-  const { data: sessionId, error } = await supabase.rpc("start_solo_investigation", {
-    requested_case_id: caseId,
-    requested_case_version: version,
-  });
+  const userId = claimsData.claims.sub;
+  if (typeof userId !== "string") redirect("/");
 
-  if (error || typeof sessionId !== "string") {
+  const { data: session, error } = await supabase
+    .from("investigation_sessions")
+    .insert({ user_id: userId, case_id: caseId, case_version: version })
+    .select("id")
+    .single();
+
+  if (error || !session) {
     redirect("/cases?error=start");
   }
 
-  redirect(`/investigations/${sessionId}`);
+  redirect(`/investigations/${session.id}`);
 }

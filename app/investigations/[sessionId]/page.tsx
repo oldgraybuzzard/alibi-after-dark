@@ -1,17 +1,24 @@
-import { ArrowLeft, Clock3, FileText, LogOut, Users } from "lucide-react";
+import { ArrowLeft, Check, Clock3, FileText, Lightbulb, LogOut, Users } from "lucide-react";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { signOut } from "@/app/auth/actions";
+import { submitDeduction } from "@/app/investigations/actions";
+import { DeductionSubmit } from "@/app/investigations/deduction-submit";
 import { playerView } from "@/lib/cases/player-view";
 import { registeredCase } from "@/lib/cases/private/registry";
 import { createClient } from "@/lib/supabase/server";
 
 type InvestigationPageProps = {
   params: Promise<{ sessionId: string }>;
+  searchParams: Promise<{ result?: string }>;
 };
 
-export default async function InvestigationPage({ params }: InvestigationPageProps) {
+export default async function InvestigationPage({ params, searchParams }: InvestigationPageProps) {
   const { sessionId } = await params;
+  const { result: requestedResult } = await searchParams;
+  const result = requestedResult === "correct" || requestedResult === "incorrect" || requestedResult === "error"
+    ? requestedResult
+    : undefined;
   const supabase = await createClient();
   const { data: claimsData } = await supabase.auth.getClaims();
   if (!claimsData?.claims) redirect("/");
@@ -81,6 +88,54 @@ export default async function InvestigationPage({ params }: InvestigationPagePro
             </article>
           ))}
         </div>
+      </section>
+
+      <section className="deductions-section" id="deductions" aria-labelledby="deductions-heading">
+        <div className="deductions-intro">
+          <p className="case-stamp">Connect the record</p>
+          <h2 id="deductions-heading">What does the evidence establish?</h2>
+          <p>Test a conclusion against the exhibits. A supported deduction may release another part of the file.</p>
+        </div>
+
+        {result && (
+          <p className={`deduction-result ${result}`} role="status">
+            {result === "correct" && "Deduction confirmed. New evidence has been added to the file."}
+            {result === "incorrect" && "That conclusion is not supported yet. Recheck the records and try again."}
+            {result === "error" && "The deduction could not be recorded. Reload the case and try again."}
+          </p>
+        )}
+
+        <div className="deduction-list">
+          {view.deductions.map((deduction, index) => (
+            <article className={`deduction-panel ${deduction.solved ? "solved" : ""}`} key={deduction.id}>
+              <div className="deduction-number">Theory {String(index + 1).padStart(2, "0")}</div>
+              {deduction.solved ? (
+                <div className="deduction-solved">
+                  <Check aria-hidden="true" size={20} />
+                  <div><h3>{deduction.question}</h3><p>Confirmed and added to your case record.</p></div>
+                </div>
+              ) : (
+                <form action={submitDeduction}>
+                  <input name="sessionId" type="hidden" value={sessionId} />
+                  <input name="deductionId" type="hidden" value={deduction.id} />
+                  <fieldset>
+                    <legend>{deduction.question}</legend>
+                    <div className="deduction-choices">
+                      {deduction.choices.map(choice => (
+                        <label key={choice.id}>
+                          <input name="choiceId" required type="radio" value={choice.id} />
+                          <span>{choice.label}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </fieldset>
+                  <DeductionSubmit />
+                </form>
+              )}
+            </article>
+          ))}
+        </div>
+        <div className="next-lead"><Lightbulb aria-hidden="true" size={18} /><span>Later leads remain sealed until the evidence supports them.</span></div>
       </section>
     </main>
   );

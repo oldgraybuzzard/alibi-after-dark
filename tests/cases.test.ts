@@ -99,6 +99,14 @@ test("player projection strips private fields and gates later clues", () => {
   const raw = JSON.stringify(view);
   for (const secret of ["PRIVATE_", "correctChoiceId", "culpritId", "eventIds", "requiredEvidenceIds", "hints"]) assert.ok(!raw.includes(secret));
 });
+test("solved deduction state unlocks evidence without exposing the answer", () => {
+  const view = playerView(fixture(), {
+    mode: "solo", assignedEvidenceIds: [], sharedEvidenceIds: [], solvedDeductionIds: ["d-1"],
+  });
+  assert.equal(view.evidence.length, 6);
+  assert.equal(view.deductions.find(deduction => deduction.id === "d-1")?.solved, true);
+  assert.ok(!JSON.stringify(view).includes("correctChoiceId"));
+});
 test("group projection requires assignment or sharing for private opening evidence", () => {
   const state = { mode: "group" as const, assignedEvidenceIds: [], sharedEvidenceIds: [], solvedDeductionIds: [] };
   assert.equal(playerView(fixture(), state).evidence.length, 3);
