@@ -104,3 +104,9 @@ npm run case:generate
 Technical references: [Next.js](https://nextjs.org/docs), [Supabase](https://supabase.com/docs), and [Supabase realtime authorization](https://supabase.com/docs/guides/realtime/authorization).
 
 Repository: https://github.com/oldgraybuzzard/alibi-after-dark
+
+### Final accusations
+
+Solo investigations now unlock a final accusation after all deductions are confirmed. Select one suspect and exactly two decisive exhibits in the training case. Optional reasoning is saved as notes and is not AI-graded. The database evaluates the suspect and required evidence, closes the investigation atomically, and prevents resubmission. Completed files remain available from the library with a saved verdict and solution reveal.
+
+Apply the checked-in Supabase migrations to the target environment before using this flow. Local SQL coverage runs with `supabase test db --local`; it checks ownership, premature submissions, forged verdicts, immutable completion, and correct/incorrect outcomes.

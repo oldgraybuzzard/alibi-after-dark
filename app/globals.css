@@ -205,3 +205,8 @@ button:disabled { cursor: wait; }
 @media (max-width: 600px) {
   .saved-session-list li { align-items: stretch; flex-direction: column; }
 }
+
+.accusation-notes { display: grid; gap: 0.75rem; margin-block: 1.5rem; }
+.accusation-notes textarea { width: 100%; padding: 0.8rem; border: 1px solid currentColor; border-radius: 4px; font: inherit; background: transparent; }
+.case-reveal p { margin-block: 1rem; }
+#accusation fieldset { margin-block: 1.5rem; }

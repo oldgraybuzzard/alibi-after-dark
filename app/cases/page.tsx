@@ -24,9 +24,8 @@ export default async function CasesPage({ searchParams }: CasesPageProps) {
     .order("created_at", { ascending: true });
   const { data: sessions, error: sessionsError } = await supabase
     .from("investigation_sessions")
-    .select("id, case_id, case_version, solved_deduction_ids, updated_at")
+    .select("id, case_id, case_version, status, solved_deduction_ids, updated_at")
     .eq("user_id", userId)
-    .eq("status", "active")
     .eq("mode", "solo")
     .order("updated_at", { ascending: false })
     .order("id", { ascending: true });
@@ -65,8 +64,8 @@ export default async function CasesPage({ searchParams }: CasesPageProps) {
 
       {sessions && sessions.length > 0 && (
         <section className="saved-investigations" aria-labelledby="saved-heading">
-          <p className="case-stamp">Your open files</p>
-          <h2 id="saved-heading">Continue investigating</h2>
+          <p className="case-stamp">Your saved files</p>
+          <h2 id="saved-heading">Your investigations</h2>
           <ul className="saved-session-list">
             {sessions.map(session => {
               const mystery = registeredCase(session.case_id, session.case_version);
@@ -78,7 +77,7 @@ export default async function CasesPage({ searchParams }: CasesPageProps) {
                     <p>{mystery ? `${solved} of ${mystery.dossier.deductions.length} deductions confirmed` : "This case version is not available right now."}</p>
                     <p>Last saved <time dateTime={session.updated_at}>{new Date(session.updated_at).toLocaleString("en-US", { timeZone: "UTC" })} UTC</time></p>
                   </div>
-                  {mystery && <Link className="start-case resume-case" href={`/investigations/${session.id}`} aria-label={`Resume ${mystery.truth.title}`}>Resume investigation</Link>}
+                  {mystery && <Link className="start-case resume-case" href={`/investigations/${session.id}`} aria-label={`${session.status === "completed" ? "View result for" : "Resume"} ${mystery.truth.title}`}>{session.status === "completed" ? "View result" : "Resume investigation"}</Link>}
                 </li>
               );
             })}

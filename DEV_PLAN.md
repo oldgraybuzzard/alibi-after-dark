@@ -168,3 +168,7 @@ Focus automated tests on case invariants, deduction reachability, evidence permi
 ## Deferred features
 
 Open-ended suspect chat, personalized cases generated on demand, public matchmaking, competitive modes, built-in voice/video, push notifications, SMS/email alerts, asynchronous multi-day play, connected seasons, and native apps. Revisit these after the core experience and content economics are demonstrated.
+
+## Solo completion implementation update
+
+Implemented final accusation submission, database-owned verdicts, immutable session completion, and a solution reveal that can be revisited from the library. Reasoning is optional and ungraded. Local RLS tests cover ownership and completion rules. Hosted migration rollout and an authenticated browser playthrough remain required before release; hints and group play remain subsequent work.
