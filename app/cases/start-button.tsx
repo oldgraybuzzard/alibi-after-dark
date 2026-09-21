@@ -11,7 +11,7 @@ export function StartButton() {
       {pending ? (
         <><LoaderCircle aria-hidden="true" className="spin" size={17} /> Opening case</>
       ) : (
-        <>Start investigation <ArrowRight aria-hidden="true" size={17} /></>
+        <>Start new investigation <ArrowRight aria-hidden="true" size={17} /></>
       )}
     </button>
   );

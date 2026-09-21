@@ -32,12 +32,6 @@ export const midnightLedger: MysteryCase = {
     method: "She used her archive key, removed the ledger, and hid it in a document tube before raising the alarm.",
     timeline: [
       {
-        id: "reading-room-locked",
-        minute: 0,
-        actorIds: ["nora-quill"],
-        fact: "Nora locked the reading room after the evening viewing.",
-      },
-      {
         id: "ellis-call",
         minute: 5,
         actorIds: ["ellis-rook"],
@@ -50,26 +44,32 @@ export const midnightLedger: MysteryCase = {
         fact: "Nora entered the basement supply cage and remained on its camera through the theft window.",
       },
       {
-        id: "mara-entry",
+        id: "reading-room-locked",
         minute: 10,
+        actorIds: [],
+        fact: "At 11:30 p.m., the closing inventory confirmed the ledger present and the reading room locked. Timeline minutes are measured from 11:20 p.m.",
+      },
+      {
+        id: "mara-entry",
+        minute: 20,
         actorIds: ["mara-vale"],
         fact: "Mara opened the reading room with the archive key assigned to her.",
       },
       {
         id: "ledger-removed",
-        minute: 15,
+        minute: 25,
         actorIds: ["mara-vale"],
         fact: "Mara removed the ledger and caught her glove on the document cabinet.",
       },
       {
         id: "alarm-raised",
-        minute: 20,
+        minute: 30,
         actorIds: ["mara-vale", "nora-quill"],
-        fact: "Mara summoned Nora and reported the ledger missing.",
+        fact: "At 11:50 p.m., Mara reported the ledger missing over the hotel intercom; Nora heard the alarm while still in the supply cage.",
       },
     ],
     proofPlan: {
-      crimeWindow: "The ledger disappeared between the 11:35 lock check and the 11:45 alarm.",
+      crimeWindow: "The ledger disappeared between the 11:30 lock check and the 11:50 alarm.",
       culpritEvidence: "The archive key log identifies Mara's entry, while matching glove fibers place her at the opened cabinet.",
       exclusions: [
         {
@@ -87,7 +87,7 @@ export const midnightLedger: MysteryCase = {
     explanation: "Mara alone entered with a valid key during the theft window, and fibers from her torn archive glove were caught where the ledger was removed.",
   },
   dossier: {
-    opening: "A century-old hotel ledger vanished from a locked reading room ten minutes before midnight. Three people remained in the building.",
+    opening: "The closing inventory confirmed the century-old ledger present and the reading room locked at 11:30 p.m. At 11:50 p.m., the alarm was raised: the ledger was missing. The theft occurred during that twenty-minute window. Three people remained in the building.",
     difficulty: "easy",
     estimatedMinutes: 20,
     evidence: [
@@ -105,7 +105,7 @@ export const midnightLedger: MysteryCase = {
         id: "lobby-call-record",
         title: "Lobby Call Record",
         kind: "audio-transcript",
-        content: "The lobby landline recorded Ellis speaking continuously from 11:35 p.m. until 11:47 p.m.",
+        content: "The lobby landline recorded Ellis speaking continuously from 11:25 p.m. until 11:52 p.m.",
         source: "Bellwether switchboard archive",
         eventIds: ["ellis-call"],
         releaseAfterDeductionId: null,
@@ -115,7 +115,7 @@ export const midnightLedger: MysteryCase = {
         id: "supply-cage-record",
         title: "Supply Cage Record",
         kind: "record",
-        content: "Nora badged into the basement cage at 11:38 p.m. Camera review shows her inside until 11:48 p.m.",
+        content: "Nora badged into the basement cage at 11:28 p.m. Camera review shows her inside until 11:53 p.m.",
         source: "Staff access report",
         eventIds: ["nora-cage"],
         releaseAfterDeductionId: null,
@@ -145,7 +145,7 @@ export const midnightLedger: MysteryCase = {
         id: "full-camera-review",
         title: "Full Camera Review",
         kind: "record",
-        content: "Lobby and basement recordings have no gaps: Ellis and Nora remain visible throughout the 11:35-11:45 theft window.",
+        content: "Lobby and basement recordings have no gaps: Ellis and Nora remain visible throughout the 11:30-11:50 theft window.",
         source: "Security office review",
         eventIds: ["ellis-call", "nora-cage"],
         releaseAfterDeductionId: "deduce-alibis",

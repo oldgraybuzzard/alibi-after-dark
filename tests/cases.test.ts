@@ -216,3 +216,20 @@ test("a narrative quality defect blocks admission despite a correct culprit", as
   p.review = async (view, signal) => ({ ...await original(view, signal), qualityIssues: ["Snapshots do not cover the full alibi window"] });
   assert.equal((await generateCase(p, { id: "test", premise: "Test", maxAttempts: 1 })).status, "quarantined");
 });
+
+test("training alibis available before solving cover the announced theft window", () => {
+  const view = playerView(midnightLedger, { mode: "solo", assignedEvidenceIds: [], sharedEvidenceIds: [], solvedDeductionIds: [] });
+  const minutes = (text: string) => [...text.matchAll(/(\d{1,2}):(\d{2})/g)].map(m => Number(m[1]) * 60 + Number(m[2]));
+  const [start, end] = minutes(view.opening);
+  assert.ok(Number.isFinite(start) && end > start, "Opening must establish a clear window");
+  const d = midnightLedger.dossier.deductions.find(d => d.id === "deduce-alibis")!;
+  for (const id of d.requiredEvidenceIds) {
+    const clue = view.evidence.find(e => e.id === id);
+    assert.ok(clue, "Alibi evidence must be available before solving");
+    const [from, until] = minutes(clue.content);
+    assert.ok(from <= start && until >= end, `${id} must cover the entire theft window`);
+  }
+  assert.deepEqual(minutes(midnightLedger.truth.proofPlan.crimeWindow), [start, end]);
+  const camera = midnightLedger.dossier.evidence.find(e => e.id === "full-camera-review")!;
+  assert.deepEqual(minutes(camera.content), [start, end]);
+});
