@@ -70,9 +70,9 @@ select lives_ok(
     select id, user_id, 'deduce-access', 'access-mara' from public.investigation_sessions$$,
   'the owner can submit the correct answer'
 );
-select results_eq(
-  $$select solved_deduction_ids from public.investigation_sessions$$,
-  array[array['deduce-access']::text[]],
+select is(
+  (select solved_deduction_ids from public.investigation_sessions),
+  array['deduce-access']::text[],
   'a correct answer persists the solved deduction'
 );
 select lives_ok(
@@ -80,9 +80,9 @@ select lives_ok(
     select id, user_id, 'deduce-access', 'access-mara' from public.investigation_sessions$$,
   'repeating a correct answer is accepted'
 );
-select results_eq(
-  $$select solved_deduction_ids from public.investigation_sessions$$,
-  array[array['deduce-access']::text[]],
+select is(
+  (select solved_deduction_ids from public.investigation_sessions),
+  array['deduce-access']::text[],
   'repeating a correct answer is idempotent'
 );
 do $$
