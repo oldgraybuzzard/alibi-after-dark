@@ -6,7 +6,7 @@ Alibi After Dark is a suspenseful detective game for one player or a group of fr
 
 ## Project status
 
-Planning stage. This repository currently contains product direction and a development plan; no playable application, generation service, or deployment exists yet.
+Early development. The Next.js starter and a local case-generation prototype are implemented. The prototype includes a typed case contract, structural validation, a blind AI review, and private candidate files. A playable interface, multiplayer service, and deployment are not implemented yet.
 
 Alibi After Dark is the working name. An initial user search found no exact App Store match; broader name, domain, and trademark checks remain open.
 
@@ -81,12 +81,25 @@ The selected starting stack is:
 | --- | --- |
 | Next.js + TypeScript | Player interface and server application: lobby, case files, chat, evidence board, and accusations |
 | Supabase | PostgreSQL database, authentication, file storage, and realtime updates for private rooms |
-| Background AI generation service | Automatically generate and validate case content; provider and worker infrastructure remain to be selected |
+| Background AI generation service | Automatically generate and validate case content; OpenAI Responses API for the prototype; production worker infrastructure remains to be selected |
 | GitHub | Source control and change history |
 
 A custom game engine controls evidence access, progression, hints, and scoring. AI creates case content; the engine enforces consistent rules and session state. A 3D game engine is not needed for the planned experience.
 
-Hosting and the AI provider remain open decisions. Setup commands, environment variables, and deployment instructions will be documented when implementation exists. Never commit credentials or provider API keys.
+The prototype uses the OpenAI Responses API, with `gpt-4.1-mini` as a configurable starting model. Hosting and production worker infrastructure remain open decisions. Never commit credentials or provider API keys.
+
+### Local development
+
+Use Node.js 22 or newer and install dependencies with `npm install`. Start the starter app with `npm run dev`.
+
+```sh
+npm test
+npm run typecheck
+npm run lint
+npm run case:generate
+```
+
+`case:generate` reads `OPENAI_API_KEY` from the ignored `.env.local` file and makes paid API calls. It writes private case candidates and reports under ignored `.local/cases/`; passing candidates still need playtesting. Use `npm run case:export -- .local/cases/<case-id>.json` to create a player packet and a separate answer key for a passing candidate. See [case generation instructions](docs/CASE_GENERATION.md) for setup, limits, and the data boundary. No generation endpoint is exposed to players.
 
 Technical references: [Next.js](https://nextjs.org/docs), [Supabase](https://supabase.com/docs), and [Supabase realtime authorization](https://supabase.com/docs/guides/realtime/authorization).
 

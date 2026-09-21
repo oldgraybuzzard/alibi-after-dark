@@ -21,7 +21,7 @@ Launch a mobile-first responsive web app for iPhone, Android, Mac, and Windows b
 
 - **Next.js + TypeScript:** Player interface and server application.
 - **Supabase:** PostgreSQL, authentication, storage for evidence assets, and realtime room updates.
-- **Background AI generation service:** Case creation and validation; AI provider and worker infrastructure remain open.
+- **Background AI generation service:** Case creation and validation through the OpenAI Responses API; production worker infrastructure remains open. The prototype uses configurable `gpt-4.1-mini`; evaluate quality and cost before finalizing the model.
 - **GitHub:** Source control and change history.
 
 Build a custom game engine for clue access, progression, hints, and scoring. Keep reusable case types and game rules separate from interface code so future clients can share the backend and logic. Native interfaces may require adaptation. No 3D game engine is planned.
@@ -44,6 +44,8 @@ Separate the system into:
 The server owns progression and evidence access. Use database row-level security and private realtime authorization to restrict room data to authorized members. Keep solution data and service credentials server-side. Persist chat and discoveries in the database; realtime delivery updates the interface but is not the only record of activity. Generation runs outside the live session path so provider latency or failure does not interrupt an accepted case.
 
 ## Phase 1 — Case model and generation prototype
+
+**Implementation progress:** Added Zod case schemas, structural validation, a player-data projection, a local OpenAI generation CLI, blind review, one bounded dossier repair, and automated tests. Schema version 2 adds a private proof plan and requires independent evidence citations excluding every innocent suspect. A local exporter creates separate player and answer-key packets for passing cases. Review also checks each deduction against its declared clues and flags implausible evidence or early answer giveaways. Two automated passes failed editorial review and were retired; no candidate is ready for playtesting. See [generation evaluation](docs/GENERATION_EVALUATION.md). The next quality milestone is structured time/access constraints and isolated deduction review. Candidates remain private and marked `needs-playtest` or `quarantined`; passing automation does not admit them to a catalog. See [prototype instructions](docs/CASE_GENERATION.md). Three independently playtested candidates and measured quality/cost are still required to complete this phase.
 
 Define a machine-readable case contract before building a large interface.
 
@@ -158,7 +160,7 @@ Focus automated tests on case invariants, deduction reachability, evidence permi
 ## Decisions to resolve next
 
 1. Define the supported browser/device matrix for the web-first release.
-2. Select hosting, background worker infrastructure, and the AI provider; configure credentials securely before API work.
+2. Select hosting and production background worker infrastructure; evaluate the prototype’s OpenAI model for quality and cost.
 3. Define audience, content boundaries, and the first case difficulty.
 4. Define guest identity and saved-progress requirements.
 5. Implement the case schema and generation prototype before expanding the catalog or adding billing.
