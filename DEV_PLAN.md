@@ -172,3 +172,7 @@ Open-ended suspect chat, personalized cases generated on demand, public matchmak
 ## Solo completion implementation update
 
 Implemented final accusation submission, database-owned verdicts, immutable session completion, and a solution reveal that can be revisited from the library. Reasoning is optional and ungraded. Local RLS tests cover ownership and completion rules. Hosted migration rollout and an authenticated browser playthrough remain required before release; hints and group play remain subsequent work.
+
+## Rollout verification update
+
+Local SQL coverage now passes 46 checks, including invalid-evidence rejection, failed-submission rollback, persisted notes, and final scoring for wrong evidence. See [rollout and verification](docs/ROLLOUT.md) for the concrete hosted commands and browser checklist. Hosted rollout remains blocked by CLI project access/connection setup; browser acceptance remains blocked by the browser tool's policy check. No hosted changes were made.

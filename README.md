@@ -6,7 +6,7 @@ Alibi After Dark is a suspenseful detective game for one player or a group of fr
 
 ## Project status
 
-Early development. An authenticated solo investigation slice is playable: players can start the hand-authored training case, review suspects and evidence, answer deductions, and persist unlocked leads. The local case-generation prototype includes a typed case contract, structural validation, a blind AI review, and private candidate files. Interviews, accusations, multiplayer, and deployment are not implemented yet.
+Early development. An authenticated solo investigation slice is playable: players can start the hand-authored training case, review suspects and evidence, answer deductions, persist unlocked leads, submit a final accusation, and revisit saved verdicts and solution reveals. The local case-generation prototype includes a typed case contract, structural validation, a blind AI review, and private candidate files. Hints, interviews, multiplayer, and deployment are not implemented yet. Hosted database migration and browser acceptance checks remain pending.
 
 Alibi After Dark is the working name. An initial user search found no exact App Store match; broader name, domain, and trademark checks remain open.
 
@@ -73,7 +73,7 @@ Track generation and validation costs per accepted case, operating cost per sess
 
 ## Development
 
-See [DEV_PLAN.md](DEV_PLAN.md) for milestones, architecture direction, acceptance criteria, and open decisions.
+See [DEV_PLAN.md](DEV_PLAN.md) for milestones, architecture direction, acceptance criteria, and open decisions. See [rollout and verification](docs/ROLLOUT.md) for database setup and the solo acceptance checklist.
 
 The selected starting stack is:
 
