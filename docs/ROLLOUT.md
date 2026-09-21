@@ -2,9 +2,11 @@
 
 ## Current verification
 
-The local database has all three checked-in migrations. The database suite passes 46 checks, including owner isolation, deduction progression, final scoring, and rollback when a submission fails validation. These tests run inside transactions and do not retain test accounts or sessions.
+The local database applies all four checked-in migrations from scratch. The database suite passes 46 checks, including owner isolation, deduction progression, final scoring, and rollback when a submission fails validation. These tests run inside transactions and do not retain test accounts or sessions.
 
-Hosted migration status has **not** been verified. During the September 20, 2026 check, the CLI account listed only ACI Member App; it did not list the configured Alibi project (`rsqaelvcpfvqqjajmhnx`). An explicit migration dry run failed because the network did not support the direct IPv6 connection. A subsequent `supabase link --project-ref rsqaelvcpfvqqjajmhnx` attempt confirmed an explicit project-access denial: the CLI account lacks the necessary privileges. Reauthentication with an account that can access Alibi is required before migration. No hosted migration was applied. Browser acceptance is also pending: the browser tool could not verify its required security policy and denied access to the local preview.
+The hosted Alibi project (`rsqaelvcpfvqqjajmhnx`) was linked and migrated on September 21, 2026. Local and hosted migration histories are aligned. A read-only verification found the `midnight-ledger` training case at version 1 with its private solution configured. Database advisors report only that leaked-password protection is disabled; that feature requires a Pro plan. The hosted `public.rls_auto_enable()` bootstrap helper is no longer executable by `public`, `anon`, or `authenticated`, while its RLS event trigger remains enabled.
+
+Authenticated browser acceptance is pending. The local preview is reachable and configured for the hosted project, but the available browser session is signed out. Complete the checklist below after signing in directly in the browser; do not pass account credentials through tooling or chat.
 
 ## Apply to the hosted project
 
@@ -28,6 +30,7 @@ Review the dry run. Expected repository migrations, in order:
 1. `20260921001711_create_case_catalog_and_solo_sessions.sql`
 2. `20260921005637_add_deduction_progression.sql`
 3. `20260921013341_add_final_accusations.sql`
+4. `20260921101217_restrict_rls_auto_enable_execution.sql`
 
 Only unapplied migrations should be pending. If existing tables conflict or history differs, reconcile the actual schema before proceeding; do not reset the hosted database or mark migrations applied without verifying their contents.
 
