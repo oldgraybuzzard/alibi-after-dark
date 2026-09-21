@@ -6,7 +6,7 @@ The local database applies all four checked-in migrations from scratch. The data
 
 The hosted Alibi project (`rsqaelvcpfvqqjajmhnx`) was linked and migrated on September 21, 2026. Local and hosted migration histories are aligned. A read-only verification found the `midnight-ledger` training case at version 1 with its private solution configured. Database advisors report only that leaked-password protection is disabled; that feature requires a Pro plan. The hosted `public.rls_auto_enable()` bootstrap helper is no longer executable by `public`, `anon`, or `authenticated`, while its RLS event trigger remains enabled.
 
-Authenticated browser acceptance is pending. The local preview is reachable and configured for the hosted project, but the available browser session is signed out. Complete the checklist below after signing in directly in the browser; do not pass account credentials through tooling or chat.
+The primary authenticated browser flow passed on September 21, 2026 against the hosted project. Progress survived reload and library navigation; valid and invalid verdict branches behaved correctly; saved notes and completed reveals remained stable; signed-out access redirected without exposing case data; keyboard focus was visible; and 390px layouts had no horizontal overflow. A separate-account isolation check remains pending.
 
 ## Apply to the hosted project
 
@@ -62,19 +62,20 @@ npm run build
 
 The SQL tests cover correct and incorrect suspects, a correct suspect with insufficient supporting evidence, duplicate/unknown/null exhibits, forged verdicts, oversized notes, failed-submission rollback, immutable completion, and rejection of deductions after completion.
 
-## Browser acceptance checklist — pending
+## Browser acceptance checklist
 
 Use a dedicated test account and a second account for isolation checks. Run on desktop and a narrow phone viewport. Record failures rather than marking this complete based on the SQL suite.
 
-- Sign in, start The Midnight Ledger, and confirm the initial page shows only opening exhibits and no solution.
-- Submit an incorrect deduction; verify progress stays unchanged.
-- Confirm one deduction, reload, return to the library, and resume the same session. Confirm progress and released evidence persist.
-- Confirm both deductions. Verify the final accusation becomes available.
-- Submit an invalid exhibit count; confirm the error is visible and the case remains active.
-- Submit a suspect with exactly two exhibits and optional notes. Verify completion, saved notes, and solution reveal.
-- Return to the library and reopen the completed result. Reload and verify it remains unchanged.
-- Repeat in separate sessions with an incorrect suspect and with the correct suspect but wrong supporting exhibits. Neither should count as solved.
-- Use a second account and a signed-out browser to open the first account's investigation URL. Neither may see the case data or reveal.
-- Verify keyboard navigation, visible focus, pending buttons, readable errors, and no horizontal overflow on a phone viewport.
+- [x] Sign in, start The Midnight Ledger, and confirm the initial page shows only opening exhibits and no solution.
+- [x] Submit an incorrect deduction; verify progress stays unchanged.
+- [x] Confirm one deduction, reload, return to the library, and resume the same session. Confirm progress and released evidence persist.
+- [x] Confirm both deductions. Verify the final accusation becomes available.
+- [x] Submit an invalid exhibit count; confirm the error is visible and the case remains active.
+- [x] Submit a suspect with exactly two exhibits and optional notes. Verify completion, saved notes, and solution reveal.
+- [x] Return to the library and reopen the completed result. Reload and verify it remains unchanged.
+- [x] Repeat in separate sessions with an incorrect suspect and with the correct suspect but wrong supporting exhibits. Neither counts as solved.
+- [x] Use a signed-out browser to open the completed investigation URL. It redirects to login without exposing case data or the reveal.
+- [ ] Use a second account to open the first account's investigation URL. It must not expose case data or the reveal.
+- [x] Verify keyboard navigation, visible focus, pending buttons, readable errors, and no horizontal overflow on a 390px viewport.
 
 Progressive hints are the next gameplay feature once this release path is verified; interviews and cooperative rooms follow the development plan.
