@@ -37,3 +37,15 @@ This keeps content generation automatic. The owner does not need to write or man
 Schema version 3 adds numeric crime and alibi intervals, a crime event reference, location IDs, continuous-record declarations, and required/held credential IDs. Validation rejects incomplete alibi coverage, same-location alibis, endpoint-only records, missing credentials, and crime events outside the declared window before generating a dossier. The training fixture and regression fixtures pass these checks.
 
 This is a first constraint layer for direct physical crimes, not a demonstrated increase in generated-case acceptance. Locations and record reliability are still authored assertions; prose consistency, travel feasibility, credential provenance, automated-crime preparation, and independent deduction review still need further work. No paid generation evaluation or new catalog admission was performed in this change.
+
+## Fresh version-3 evaluation — September 21
+
+Checkpoint `4588dba` was evaluated using one new maritime-museum atlas-theft premise with a direct physical crime, clear access requirements, and continuous alibis.
+
+- Candidate: `case-c085ab5a-87f1-48c7-8f3f-6e6304b2983a`
+- Model: `gpt-4.1-mini`
+- Outcome: quarantined at truth validation, before dossier generation or blind review.
+- Rejections: timeline was not strictly chronological; the declared alibi for `s2` did not cover the crime interval.
+- Usage: 1 API call, 831 input tokens, 1,038 output tokens. No automatic rerun.
+
+The stricter validator caught an alibi defect before further generation costs, but this run does not demonstrate playable content quality. No player packet was exported and no case was admitted to the catalog. The saved report contains validation issues; the rejected truth itself is not retained by the current pipeline. Next work should constrain truth construction and preserve rejected truth privately for diagnosis, followed by another bounded evaluation.
