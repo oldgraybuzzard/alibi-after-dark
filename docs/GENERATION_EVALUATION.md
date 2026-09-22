@@ -49,3 +49,11 @@ Checkpoint `4588dba` was evaluated using one new maritime-museum atlas-theft pre
 - Usage: 1 API call, 831 input tokens, 1,038 output tokens. No automatic rerun.
 
 The stricter validator caught an alibi defect before further generation costs, but this run does not demonstrate playable content quality. No player packet was exported and no case was admitted to the catalog. The saved report contains validation issues; the rejected truth itself is not retained by the current pipeline. Next work should constrain truth construction and preserve rejected truth privately for diagnosis, followed by another bounded evaluation.
+
+## Compiled truth evaluation — September 21
+
+The generator now writes six named narrative slots and the compiler supplies their numeric timeline, crime interval, and covering alibi intervals. Rejected truth is retained privately. Offline checks cover the compiler and private quarantine retention.
+
+One live `gpt-4.1-mini` run produced **The Vanishing Atlas**, candidate `case-b370d279-a1a6-4aea-816f-d1bdf9cb973a`. The compiled timing passed; the pipeline returned `needs-playtest` after two dossier attempts (5 calls, 8,924 input tokens, 4,255 output tokens). Editorial inspection then quarantined it: event descriptions were bare minute numbers, a pressure mat purported to detect lock tampering, minute 29 was described as preceding a window starting at 20, and the second deduction needed facts outside its required clues. The opening also omitted the discovery time. No case was published or exported.
+
+Added a deterministic check rejecting numeric-only timeline facts and clarified the draft schema descriptions after observing this failure. That follow-up has offline coverage but has not had another paid generation run. The original numeric ordering/coverage failure is eliminated by construction; narrative consistency and independent deduction review remain unresolved quality work.

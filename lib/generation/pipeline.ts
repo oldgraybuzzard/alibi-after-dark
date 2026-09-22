@@ -10,6 +10,8 @@ export interface CaseProvider {
 export type GenerationResult = {
   status: "needs-playtest" | "quarantined";
   candidate: MysteryCase | null;
+  /** Private diagnostic data, including truth rejected before dossier generation. */
+  truth: Truth;
   review: Review | null;
   attempts: number;
   issues: string[];
@@ -27,7 +29,7 @@ export async function generateCase(provider: CaseProvider, options: {
   const signal = AbortSignal.timeout(timeoutMs);
   const truth = TruthSchema.parse(await provider.truth(options.premise, signal));
   const truthReport = validateTruth(truth);
-  if (!truthReport.valid) return { status: "quarantined", candidate: null, review: null, attempts: 0, issues: truthReport.issues };
+  if (!truthReport.valid) return { status: "quarantined", truth, candidate: null, review: null, attempts: 0, issues: truthReport.issues };
   let candidate: MysteryCase | null = null;
   let review: Review | null = null;
   let issues: string[] = [];
@@ -72,8 +74,8 @@ export async function generateCase(provider: CaseProvider, options: {
         issues.push("Reviewer must cite at least two distinct, existing clues.");
       }
     }
-    if (!issues.length) return { status: "needs-playtest", candidate, review, attempts, issues };
-    if (attempts === maxAttempts) return { status: "quarantined", candidate, review, attempts, issues };
+    if (!issues.length) return { status: "needs-playtest", truth, candidate, review, attempts, issues };
+    if (attempts === maxAttempts) return { status: "quarantined", truth, candidate, review, attempts, issues };
   }
   throw new Error("Generation ended unexpectedly.");
 }

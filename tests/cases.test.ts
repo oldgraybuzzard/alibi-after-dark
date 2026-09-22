@@ -1,8 +1,9 @@
+import { compileTruth, TruthDraftSchema } from "../lib/generation/truth-plan";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { zodTextFormat } from "openai/helpers/zod";
 import { TruthSchema, DossierSchema, ReviewSchema, type MysteryCase } from "../lib/cases/schema";
-import { validateCase } from "../lib/cases/validate";
+import { validateCase, validateTruth } from "../lib/cases/validate";
 import { availableHint } from "../lib/cases/hints";
 import { playerView, reviewView } from "../lib/cases/player-view";
 import { midnightLedger } from "../lib/cases/private/midnight-ledger";
@@ -50,7 +51,7 @@ function provider(): CaseProvider {
 }
 
 test("schemas can be converted to strict API output formats", () => {
-  for (const schema of [TruthSchema, DossierSchema, ReviewSchema]) assert.equal(zodTextFormat(schema, "test").strict, true);
+  for (const schema of [TruthSchema, TruthDraftSchema, DossierSchema, ReviewSchema]) assert.equal(zodTextFormat(schema, "test").strict, true);
 });
 test("valid structural fixture passes", () => assert.equal(validateCase(fixture()).valid, true));
 test("hand-authored training case passes structural admission", () => {
@@ -281,4 +282,33 @@ test("hints expose only the requested tier of an available unsolved deduction", 
   c.dossier.deductions[1].requiredEvidenceIds = ["e-4", "e-5"];
   assert.equal(availableHint(c, state, "d-1", 0), undefined);
   assert.ok(!JSON.stringify(playerView(c, state)).includes("hint 1"));
+});
+
+
+test("truth compiler owns chronological slots and full-window alibi intervals", () => {
+  const base = fixture().truth;
+  const draft = { ...base, events: {
+    firstAlibiStarts: "First record starts", secondAlibiStarts: "Second record starts", lastInventory: "Object present", theft: "Culprit takes object", discovery: "Object missing", alibisEnd: "Records end",
+  } };
+  const truth = compileTruth(draft);
+  assert.deepEqual(truth.timeline.map(e => e.minute), [0, 5, 20, 30, 40, 45]);
+  assert.deepEqual(truth.proofPlan.exclusions.map(e => [e.startMinute, e.endMinute]), [[0, 45], [5, 45]]);
+  assert.deepEqual(validateTruth(truth), { valid: true, issues: [] });
+  assert.deepEqual(truth.timeline.find(e => e.id === "theft")?.actorIds, [base.culpritId]);
+  assert.equal(base.proofPlan.constraints.crimeStartMinute, 0);
+});
+test("quarantine retains rejected truth privately without publishing a candidate", async () => {
+  const p = provider();
+  p.truth = async () => { const truth = fixture().truth; truth.proofPlan.exclusions[0].endMinute = 1; return truth; };
+  const result = await generateCase(p, { id: "retained-truth", premise: "An inn" });
+  assert.equal(result.status, "quarantined");
+  assert.equal(result.candidate, null);
+  assert.equal(result.truth.proofPlan.exclusions[0].endMinute, 1);
+});
+
+
+test("bare timestamps cannot stand in for narrative truth events", () => {
+  const truth = fixture().truth;
+  truth.timeline[0].fact = "20";
+  assert.ok(validateTruth(truth).issues.some(issue => issue.includes("not just a timestamp")));
 });

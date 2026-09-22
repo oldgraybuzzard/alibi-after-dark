@@ -13,14 +13,14 @@ async function main() {
   const model = process.env.OPENAI_MODEL?.trim() || "gpt-4.1-mini";
   const args = process.argv.slice(2);
   if (args.length > 1) throw new Error("Pass one quoted premise, or no arguments for the default premise.");
-  const premise = args[0] || "The Last Guest: a host disappears during a lakeside reunion, but their phone keeps sending messages while the guests hold it.";
+  const premise = args[0] || "A rare illustrated atlas disappears from a locked display cabinet during a private viewing at a small maritime museum. Three suspects remain in the building. Use a direct physical theft with plausible access credentials and independent continuous alibi records.";
   const id = `case-${randomUUID()}`;
   const { provider, usage } = createOpenAIProvider(apiKey, model);
   console.log("Generating one private development case (up to 5 API calls, 3 minutes total)...");
   const result = await generateCase(provider, { id, premise });
   await mkdir(".local/cases", { recursive: true });
   const path = `.local/cases/${id}.json`;
-  await writeFile(path, JSON.stringify({ generatedAt: new Date().toISOString(), model, usage, ...result }, null, 2) + "\n", { flag: "wx", mode: 0o600 });
+  await writeFile(path, JSON.stringify({ generatedAt: new Date().toISOString(), premise, model, usage, ...result }, null, 2) + "\n", { flag: "wx", mode: 0o600 });
   console.log(JSON.stringify({ status: result.status, path, attempts: result.attempts, issues: result.issues, usage }, null, 2));
   if (result.status === "quarantined") process.exitCode = 2;
 }

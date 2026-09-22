@@ -20,6 +20,7 @@ export function validateTruth(input: unknown): ValidationReport {
   references([t.culpritId], suspects, "culprit", issues);
   t.timeline.forEach((event, index) => {
     references(event.actorIds, suspects, "event actor", issues);
+    if (!/\p{L}/u.test(event.fact)) issues.push(`Timeline event ${event.id} must describe a fact, not just a timestamp.`);
     if (index && event.minute <= t.timeline[index - 1].minute) issues.push("Timeline must be strictly chronological.");
   });
   const innocent = new Set(t.suspects.filter(s => s.id !== t.culpritId).map(s => s.id));

@@ -39,7 +39,7 @@ Output is saved under ignored `.local/cases/` using a unique ID and restrictive 
 
 The blind reviewer receives only public suspect descriptions, all clue content, and deduction questions/choices. It never receives the intended culprit, secrets, answer keys, or reveal. It also receives per-deduction packets containing only the declared supporting clues and must assess each answer against its packet. These assessments share the same review request as the full case, so they are not isolated blind calls; human review is still necessary. Its inferred culprit must match the immutable truth and it must report a unique solution without contradictions or unsupported assumptions. It must also independently cite real evidence excluding every innocent suspect. The private proof plan and intended exclusions are never supplied to this reviewer. The reviewer is a separate call to the configured model, not an independent human or a guarantee of correctness.
 
-Repairs regenerate the dossier around the original truth. Invalid truth is quarantined immediately. Passing cases always need playtesting before catalog admission.
+Repairs regenerate the dossier around the original truth. Invalid truth is quarantined immediately and retained in the private result report for diagnosis. Passing cases always need playtesting before catalog admission.
 
 ## Player data boundary
 
@@ -80,3 +80,11 @@ A GPT-4.1 candidate (`case-da80392b-ada2-4701-ae99-732227f6e5a6`) initially pass
 The updated regression suite contains 23 passing tests. The default model remains unchanged; exploratory runs used `OPENAI_MODEL=gpt-4.1` only for those runs. Changing both a model and a premise does not establish which change affected quality.
 
 The later festival-prize candidate (`case-f4984adb-df36-4738-b32d-a5f4e3e21a0a`) also passed automation but failed editorial inspection and was quarantined. No current candidate is ready for playtesting. See [generation evaluation](GENERATION_EVALUATION.md) for costs in tokens, specific failures, and the next constraint-model work.
+
+## Compiled truth schedule
+
+The OpenAI truth response now uses `TruthDraftSchema`: six named event descriptions rather than a freely ordered numeric timeline. `compileTruth` assigns the events to minutes 0, 5, 20, 30, 40, and 45; the object is present at 20, stolen at 30, and discovered missing at 40. The two independently recorded alibis span 0–45 and 5–45. The model receives this schedule before writing any prose. There is no post-hoc stretching of a rejected alibi or sorting of a contradictory story.
+
+The compiler preserves generated identities, narrative facts, locations, credential declarations, and record-reliability declarations. Existing validation still rejects invalid references, missing credentials, same-location alibis, or unreliable records. Blind review remains necessary to catch prose that contradicts the schedule or misrepresents what evidence can establish. This deliberately limits the current generator to one direct physical-crime structure.
+
+Reports now retain the premise and private truth even when validation rejects it before dossier generation. Schema/API failures still follow the existing operational-error path. Call and timeout limits remain unchanged.
