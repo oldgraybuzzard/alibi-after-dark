@@ -1,8 +1,10 @@
+import { AccusationForm } from "@/app/investigations/accusation-form";
+import { DeductionHints } from "@/app/investigations/deduction-hints";
 import { ArrowLeft, Check, Clock3, FileText, Lightbulb, LogOut, Users } from "lucide-react";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { signOut } from "@/app/auth/actions";
-import { submitAccusation, submitDeduction } from "@/app/investigations/actions";
+import { submitDeduction } from "@/app/investigations/actions";
 import { DeductionSubmit } from "@/app/investigations/deduction-submit";
 import { playerView } from "@/lib/cases/player-view";
 import { registeredCase } from "@/lib/cases/private/registry";
@@ -138,6 +140,7 @@ export default async function InvestigationPage({ params, searchParams }: Invest
                   <DeductionSubmit />
                 </form>
               )}
+              {!deduction.solved && !completed && <DeductionHints sessionId={sessionId} deductionId={deduction.id} />}
             </article>
           ))}
         </div>
@@ -150,7 +153,7 @@ export default async function InvestigationPage({ params, searchParams }: Invest
           <h2 id="accusation-heading">{completed ? "The final account" : "Make your accusation"}</h2>
         </div>
         {completed && accusation ? (
-          <article className="deduction-panel case-reveal">
+          <article className="case-reveal">
             <h3>{accusation.is_correct ? "Case solved. Your evidence holds up." : "Case closed. Here is what the record proves."}</h3>
             <p>You accused {view.suspects.find(s => s.id === accusation.suspect_id)?.name}, citing {view.evidence.filter(e => accusation.evidence_ids.includes(e.id)).map(e => e.title).join(" and ")}.</p>
             {accusation.reasoning && <p>Your notes: {accusation.reasoning}</p>}
@@ -165,21 +168,7 @@ export default async function InvestigationPage({ params, searchParams }: Invest
         ) : completed ? (
           <p role="alert">Your saved result could not be loaded. Reload to try again.</p>
         ) : ready ? (
-          <form className="deduction-panel" action={submitAccusation}>
-            <input name="sessionId" type="hidden" value={sessionId} />
-            <p>This is your final submission. It closes this investigation and reveals the solution, even if your accusation is wrong.</p>
-            {requestedResult === "accusation-error" && <p className="case-alert" role="alert">Your accusation was not saved. Choose one suspect and exactly {mystery.dossier.accusation.requiredEvidenceIds.length} different exhibits, then try again.</p>}
-            <fieldset>
-              <legend>Who did it?</legend>
-              <div className="deduction-choices">{view.suspects.map(suspect => <label key={suspect.id}><input name="suspectId" type="radio" required value={suspect.id} /><span>{suspect.name}</span></label>)}</div>
-            </fieldset>
-            <fieldset>
-              <legend>Choose the {mystery.dossier.accusation.requiredEvidenceIds.length} decisive exhibits that connect the culprit and rule out the others.</legend>
-              <div className="deduction-choices">{view.evidence.map(exhibit => <label key={exhibit.id}><input name="evidenceId" type="checkbox" value={exhibit.id} /><span>{exhibit.title}</span></label>)}</div>
-            </fieldset>
-            <label className="accusation-notes">Your reasoning (optional; saved as notes, not graded)<textarea name="reasoning" maxLength={2000} rows={4} /></label>
-            <DeductionSubmit final />
-          </form>
+          <AccusationForm sessionId={sessionId} suspects={view.suspects} evidence={view.evidence} requiredCount={mystery.dossier.accusation.requiredEvidenceIds.length} />
         ) : <p>Confirm all deductions to unlock your final accusation.</p>}
       </section>
     </main>

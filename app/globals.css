@@ -206,7 +206,71 @@ button:disabled { cursor: wait; }
   .saved-session-list li { align-items: stretch; flex-direction: column; }
 }
 
-.accusation-notes { display: grid; gap: 0.75rem; margin-block: 1.5rem; }
-.accusation-notes textarea { width: 100%; padding: 0.8rem; border: 1px solid currentColor; border-radius: 4px; font: inherit; background: transparent; }
-.case-reveal p { margin-block: 1rem; }
-#accusation fieldset { margin-block: 1.5rem; }
+/* Final submissions and reveals have a vertical reading order, unlike numbered theories. */
+.accusation-form, .case-reveal {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: 28px;
+  width: 100%;
+  max-width: 1040px;
+  margin-top: 32px;
+  border: 1px solid #c8c0b3;
+  border-radius: 4px;
+  background: rgba(251, 250, 246, .68);
+  padding: 32px;
+}
+.accusation-form > *, .case-reveal > * { min-width: 0; }
+.accusation-form .case-alert { margin: 0; }
+.accusation-warning {
+  max-width: 72ch;
+  margin: 0;
+  border-left: 3px solid var(--oxide);
+  padding-left: 16px;
+  color: #514b43;
+  font-size: 14px;
+  line-height: 1.65;
+}
+.accusation-form fieldset { min-width: 0; margin: 0; padding: 0; border: 0; }
+.accusation-form legend, .case-reveal h3 {
+  margin: 0 0 16px;
+  font-family: var(--font-cormorant), serif;
+  font-size: 31px;
+  font-weight: 600;
+  line-height: 1.15;
+}
+.accusation-guidance { margin: 0; color: #514b43; font-size: 14px; line-height: 1.6; }
+.accusation-count { margin: 12px 0; color: var(--pine); font-size: 13px; font-weight: 700; }
+.accusation-evidence { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.accusation-form .deduction-choices label { cursor: pointer; }
+.accusation-form .deduction-choices span { height: 100%; min-height: 56px; padding: 14px; overflow-wrap: anywhere; }
+.accusation-form fieldset:disabled { opacity: .7; }
+.accusation-notes { display: grid; gap: 8px; font-size: 16px; font-weight: 700; }
+.accusation-optional { font-size: 14px; font-weight: 400; color: #514b43; }
+.accusation-notes .accusation-guidance { font-weight: 400; }
+.accusation-notes textarea {
+  display: block;
+  width: 100%;
+  min-height: 128px;
+  resize: vertical;
+  padding: 14px;
+  border: 1px solid #bcb3a6;
+  border-radius: 3px;
+  background: var(--paper-bright);
+  color: var(--ink);
+  font: inherit;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+.accusation-notes textarea:focus-visible { outline: 3px solid rgba(23, 63, 57, .35); outline-offset: 2px; }
+.case-reveal { gap: 16px; }
+.case-reveal h3, .case-reveal p { margin: 0; }
+.case-reveal p { line-height: 1.65; overflow-wrap: anywhere; }
+.deduction-hints { grid-column: 1 / -1; border-top: 1px solid #c8c0b3; padding: 22px; }
+.deduction-hints li { margin-bottom: 0.75rem; }
+@media (max-width: 640px) {
+  .accusation-form, .case-reveal { padding: 22px 18px; gap: 24px; margin-top: 24px; }
+  .accusation-form .deduction-choices { grid-template-columns: minmax(0, 1fr); }
+  .accusation-form legend, .case-reveal h3 { font-size: 28px; }
+}

@@ -176,3 +176,9 @@ Implemented final accusation submission, database-owned verdicts, immutable sess
 ## Rollout verification update
 
 Local SQL coverage passes 46 checks, including invalid-evidence rejection, failed-submission rollback, persisted notes, and final scoring for wrong evidence. All four migrations are deployed to the hosted Alibi project, migration history is aligned, and database checks confirm the training solution is configured. Hosted advisors report only the plan-level leaked-password-protection warning. The primary authenticated solo flow passes desktop and mobile browser acceptance, including persistence, scoring branches, and signed-out route protection. A separate-account isolation check remains. See [rollout and verification](docs/ROLLOUT.md) for the deployment record and browser checklist.
+
+## Error recovery, hints, and constraint validation
+
+Implemented controlled accusation fields with inline validation/save errors, plus three on-demand hints for each visible unsolved deduction. Hint access checks the owned active session on the server; hint display itself is not persisted across reloads. Added version-3 physical-crime constraints and regression checks before dossier generation. Browser testing of these changes and the second-account isolation check remain pending because the browser tool's security-policy verification failed. Existing SQL ownership tests continue to cover cross-account access.
+
+User acceptance: on September 21, the user confirmed the corrected accusation layout looked good and completed the training case. The separate-account browser isolation check remains pending.

@@ -31,3 +31,9 @@ Generating plausible prose is easier than generating a fair puzzle. Both generat
 The next implementation should represent critical facts as structured constraints: numeric crime/alibi intervals, locations, travel limits, locks and required credentials, and evidence that supports each fact. Deterministic checks should verify interval coverage and access requirements before narrative rendering. Review should solve individual deductions in separate calls without access to future clues, and a reasoning-model comparison should use fixed premises and recorded criteria.
 
 This keeps content generation automatic. The owner does not need to write or manually repair each mystery; failed generated content remains quarantined while reusable rules improve. Human playtests remain necessary to measure fun, pacing, and residual ambiguity. The 20–30-minute duration target remains unvalidated.
+
+## September 21 — deterministic constraint checks
+
+Schema version 3 adds numeric crime and alibi intervals, a crime event reference, location IDs, continuous-record declarations, and required/held credential IDs. Validation rejects incomplete alibi coverage, same-location alibis, endpoint-only records, missing credentials, and crime events outside the declared window before generating a dossier. The training fixture and regression fixtures pass these checks.
+
+This is a first constraint layer for direct physical crimes, not a demonstrated increase in generated-case acceptance. Locations and record reliability are still authored assertions; prose consistency, travel feasibility, credential provenance, automated-crime preparation, and independent deduction review still need further work. No paid generation evaluation or new catalog admission was performed in this change.

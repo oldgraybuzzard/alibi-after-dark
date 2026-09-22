@@ -6,7 +6,7 @@ Alibi After Dark is a suspenseful detective game for one player or a group of fr
 
 ## Project status
 
-Early development. An authenticated solo investigation slice is playable: players can start the hand-authored training case, review suspects and evidence, answer deductions, persist unlocked leads, submit a final accusation, and revisit saved verdicts and solution reveals. The local case-generation prototype includes a typed case contract, structural validation, a blind AI review, and private candidate files. Hints, interviews, multiplayer, and application deployment are not implemented yet. Hosted database migrations are deployed and the primary solo browser flow is verified; second-account isolation remains pending.
+Early development. An authenticated solo investigation slice is playable: players can start the hand-authored training case, review suspects and evidence, answer deductions, persist unlocked leads, submit a final accusation, and revisit saved verdicts and solution reveals. The local case-generation prototype includes a typed case contract, structural validation, a blind AI review, and private candidate files. Interviews, multiplayer, and application deployment are not implemented yet. Hosted database migrations are deployed and the primary solo browser flow is verified; second-account isolation remains pending.
 
 Alibi After Dark is the working name. An initial user search found no exact App Store match; broader name, domain, and trademark checks remain open.
 
@@ -110,3 +110,9 @@ Repository: https://github.com/oldgraybuzzard/alibi-after-dark
 Solo investigations now unlock a final accusation after all deductions are confirmed. Select one suspect and exactly two decisive exhibits in the training case. Optional reasoning is saved as notes and is not AI-graded. The database evaluates the suspect and required evidence, closes the investigation atomically, and prevents resubmission. Completed files remain available from the library with a saved verdict and solution reveal.
 
 Apply the checked-in Supabase migrations to the target environment before using this flow. Local SQL coverage runs with `supabase test db --local`; it checks ownership, premature submissions, forged verdicts, immutable completion, and correct/incorrect outcomes.
+
+### Hints and submission recovery
+
+Each unsolved, available deduction offers three hints, fetched individually after an ownership check. The last hint warns that it may reveal the answer. Hint display resets on reload; deduction progress remains saved. Accusation validation and database errors now stay inline, preserving the selected suspect, exhibits, and written notes while the page stays open.
+
+Case authoring now uses schema version 3 with numeric crime/alibi intervals and explicit access credentials. Old private version-2 candidates must be regenerated or deliberately migrated and revalidated; they cannot be admitted as version-3 cases. The existing training case's identity and player-facing story are unchanged.

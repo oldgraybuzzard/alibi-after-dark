@@ -28,6 +28,15 @@ export function validateTruth(input: unknown): ValidationReport {
   for (const suspect of innocent) if (!planned.has(suspect)) issues.push(`Missing planned exclusion for ${suspect}.`);
   const eventIds = new Set(t.timeline.map(e => e.id));
   for (const exclusion of t.proofPlan.exclusions) references(exclusion.eventIds, eventIds, "exclusion event", issues);
+  const constraints = t.proofPlan.constraints;
+  if (constraints.crimeStartMinute >= constraints.crimeEndMinute) issues.push("Crime interval must have positive duration.");
+  const crimeEvent = t.timeline.find(event => event.id === constraints.crimeEventId);
+  if (!crimeEvent || !crimeEvent.actorIds.includes(t.culpritId) || crimeEvent.minute < constraints.crimeStartMinute || crimeEvent.minute > constraints.crimeEndMinute) issues.push("Crime event must place the culprit within the crime interval.");
+  if (constraints.requiredCredentialId && !constraints.culpritCredentialIds.includes(constraints.requiredCredentialId)) issues.push("Culprit lacks the required access credential.");
+  for (const exclusion of t.proofPlan.exclusions) {
+    if (exclusion.startMinute > constraints.crimeStartMinute || exclusion.endMinute < constraints.crimeEndMinute || exclusion.startMinute >= exclusion.endMinute) issues.push(`Alibi interval does not cover the crime window for ${exclusion.suspectId}.`);
+    if (exclusion.locationId === constraints.crimeLocationId || !exclusion.continuousRecord) issues.push(`Alibi must establish continuous presence away from the crime for ${exclusion.suspectId}.`);
+  }
   return report(issues);
 }
 

@@ -1,7 +1,7 @@
 import type { MysteryCase } from "../schema";
 
 export const midnightLedger: MysteryCase = {
-  schemaVersion: 2,
+  schemaVersion: 3,
   id: "midnight-ledger",
   version: 1,
   truth: {
@@ -70,16 +70,19 @@ export const midnightLedger: MysteryCase = {
     ],
     proofPlan: {
       crimeWindow: "The ledger disappeared between the 11:30 lock check and the 11:50 alarm.",
+      constraints: { crimeStartMinute: 10, crimeEndMinute: 30, crimeEventId: "ledger-removed", crimeLocationId: "reading-room", requiredCredentialId: "archive-key", culpritCredentialIds: ["archive-key"] },
       culpritEvidence: "The archive key log identifies Mara's entry, while matching glove fibers place her at the opened cabinet.",
       exclusions: [
         {
           suspectId: "ellis-rook",
           eventIds: ["ellis-call"],
+          startMinute: 5, endMinute: 32, locationId: "lobby", continuousRecord: true,
           observableProof: "The timestamped landline recording and lobby camera cover Ellis for the full theft window.",
         },
         {
           suspectId: "nora-quill",
           eventIds: ["nora-cage"],
+          startMinute: 8, endMinute: 33, locationId: "basement", continuousRecord: true,
           observableProof: "The supply-cage badge log and continuous camera footage cover Nora for the full theft window.",
         },
       ],

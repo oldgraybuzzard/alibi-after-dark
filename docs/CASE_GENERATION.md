@@ -27,7 +27,7 @@ Output is saved under ignored `.local/cases/` using a unique ID and restrictive 
 
 ## Case contract
 
-`lib/cases/schema.ts` defines schema version 2 (earlier development candidates must be regenerated):
+`lib/cases/schema.ts` defines schema version 3 (earlier development candidates must be regenerated):
 
 - Immutable truth: suspects, secrets, culprit, motive, method, chronological events, and a private proof plan covering the crime window and observable exclusions for each innocent suspect.
 - Dossier: opening, readable evidence, gated deductions, choices, tiered hints, and accusation criteria.
@@ -35,7 +35,7 @@ Output is saved under ignored `.local/cases/` using a unique ID and restrictive 
 - Opening delivery: shared or distributed. Solo sees all opening evidence; group assignment is future session-service work.
 - Accusation: decisive evidence plus an evidence-based exclusion for every innocent suspect.
 
-`validateCase` checks schema shape, duplicate IDs, reference validity, chronology, exclusion coverage, answer references, and graph reachability. It does not prove narrative truth, timing consistency within prose, answer fairness, or 20–30 minute play duration.
+`validateCase` checks schema shape, duplicate IDs, reference validity, chronology, numeric crime/alibi coverage, required access credentials, exclusion coverage, answer references, and graph reachability. It does not prove narrative truth, timing consistency within prose, answer fairness, or 20–30 minute play duration.
 
 The blind reviewer receives only public suspect descriptions, all clue content, and deduction questions/choices. It never receives the intended culprit, secrets, answer keys, or reveal. It also receives per-deduction packets containing only the declared supporting clues and must assess each answer against its packet. These assessments share the same review request as the full case, so they are not isolated blind calls; human review is still necessary. Its inferred culprit must match the immutable truth and it must report a unique solution without contradictions or unsupported assumptions. It must also independently cite real evidence excluding every innocent suspect. The private proof plan and intended exclusions are never supplied to this reviewer. The reviewer is a separate call to the configured model, not an independent human or a guarantee of correctness.
 

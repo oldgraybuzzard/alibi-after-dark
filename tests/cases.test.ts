@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { zodTextFormat } from "openai/helpers/zod";
 import { TruthSchema, DossierSchema, ReviewSchema, type MysteryCase } from "../lib/cases/schema";
 import { validateCase } from "../lib/cases/validate";
+import { availableHint } from "../lib/cases/hints";
 import { playerView, reviewView } from "../lib/cases/player-view";
 import { midnightLedger } from "../lib/cases/private/midnight-ledger";
 import { generateCase, type CaseProvider } from "../lib/generation/pipeline";
@@ -10,12 +11,12 @@ import { generateCase, type CaseProvider } from "../lib/generation/pipeline";
 // Deliberately minimal structural fixture, not a playable or AI-generated mystery.
 function fixture(): MysteryCase {
   return {
-    schemaVersion: 2, id: "test-case", version: 1,
+    schemaVersion: 3, id: "test-case", version: 1,
     truth: {
       title: "Test case", setting: "An inn", culpritId: "a", motive: "A private motive",
       method: "A private method", explanation: "PRIVATE_REVEAL",
-      proofPlan: { crimeWindow: "PRIVATE_WINDOW", culpritEvidence: "PRIVATE_PROOF_PLAN",
-        exclusions: ["b", "c"].map(suspectId => ({ suspectId, eventIds: ["event-0"], observableProof: "PRIVATE_EXCLUSION" })),
+      proofPlan: { constraints: { crimeStartMinute: 0, crimeEndMinute: 3, crimeEventId: "event-1", crimeLocationId: "study", requiredCredentialId: "key", culpritCredentialIds: ["key"] }, crimeWindow: "PRIVATE_WINDOW", culpritEvidence: "PRIVATE_PROOF_PLAN",
+        exclusions: ["b", "c"].map(suspectId => ({ suspectId, eventIds: ["event-0"], startMinute: 0, endMinute: 3, locationId: "lobby", continuousRecord: true, observableProof: "PRIVATE_EXCLUSION" })),
       },
       suspects: ["a", "b", "c"].map(id => ({ id, name: id.toUpperCase(), publicBio: "Guest", secret: "PRIVATE_SECRET" })),
       timeline: [0, 1, 2, 3].map(n => ({ id: `event-${n}`, minute: n, actorIds: ["a"], fact: `Private fact ${n}` })),
@@ -232,4 +233,52 @@ test("training alibis available before solving cover the announced theft window"
   assert.deepEqual(minutes(midnightLedger.truth.proofPlan.crimeWindow), [start, end]);
   const camera = midnightLedger.dossier.evidence.find(e => e.id === "full-camera-review")!;
   assert.deepEqual(minutes(camera.content), [start, end]);
+});
+
+
+test("numeric alibi gaps and endpoint-only records block admission", () => {
+  const c = fixture();
+  c.truth.proofPlan.exclusions[0].startMinute = 1;
+  c.truth.proofPlan.exclusions[1].continuousRecord = false;
+  const issues = validateCase(c).issues;
+  assert.ok(issues.some(i => i.includes("Alibi interval")));
+  assert.ok(issues.some(i => i.includes("continuous presence")));
+});
+test("missing credentials and crime outside the window block admission", () => {
+  const c = fixture();
+  c.truth.proofPlan.constraints.culpritCredentialIds = [];
+  c.truth.proofPlan.constraints.crimeStartMinute = 2;
+  assert.ok(validateCase(c).issues.some(i => i.includes("credential")));
+  assert.ok(validateCase(c).issues.some(i => i.includes("Crime event")));
+});
+test("an alibi at the crime scene cannot exclude a suspect", () => {
+  const c = fixture();
+  c.truth.proofPlan.exclusions[0].locationId = "study";
+  assert.equal(validateCase(c).valid, false);
+});
+test("invalid physical constraints stop generation before dossier calls", async () => {
+  const p = provider();
+  p.truth = async () => {
+    const truth = fixture().truth;
+    truth.proofPlan.exclusions[0].endMinute = 2;
+    return truth;
+  };
+  p.dossier = async () => { throw new Error("Dossier generation should not run"); };
+  const result = await generateCase(p, { id: "constraint-test", premise: "An inn" });
+  assert.equal(result.status, "quarantined");
+  assert.equal(result.attempts, 0);
+});
+
+
+test("hints expose only the requested tier of an available unsolved deduction", () => {
+  const c = fixture();
+  const state = { mode: "solo" as const, assignedEvidenceIds: [], sharedEvidenceIds: [], solvedDeductionIds: [] };
+  assert.equal(availableHint(c, state, "d-0", 0), "hint 1");
+  assert.equal(availableHint(c, state, "d-0", 2), "hint 3");
+  for (const tier of [-1, 3, 0.5, NaN]) assert.equal(availableHint(c, state, "d-0", tier), undefined);
+  assert.equal(availableHint(c, state, "missing", 0), undefined);
+  assert.equal(availableHint(c, { ...state, solvedDeductionIds: ["d-0"] }, "d-0", 0), undefined);
+  c.dossier.deductions[1].requiredEvidenceIds = ["e-4", "e-5"];
+  assert.equal(availableHint(c, state, "d-1", 0), undefined);
+  assert.ok(!JSON.stringify(playerView(c, state)).includes("hint 1"));
 });

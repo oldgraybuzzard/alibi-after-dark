@@ -35,7 +35,7 @@ export async function generateCase(provider: CaseProvider, options: {
     signal.throwIfAborted();
     // Repairs regenerate only the dossier: the underlying truth is immutable.
     const dossier = DossierSchema.parse(await provider.dossier(structuredClone(truth), issues, signal));
-    candidate = CaseSchema.parse({ schemaVersion: 2, id: options.id, version: 1, truth, dossier });
+    candidate = CaseSchema.parse({ schemaVersion: 3, id: options.id, version: 1, truth, dossier });
     review = null;
     issues = validateCase(candidate).issues;
     if (!issues.length) {

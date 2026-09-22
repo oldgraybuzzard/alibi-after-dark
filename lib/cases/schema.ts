@@ -20,10 +20,22 @@ export const TruthSchema = z.object({
   })).min(4).max(12),
   proofPlan: z.object({
     crimeWindow: text,
+    constraints: z.object({
+      crimeStartMinute: z.number().int().min(0).max(10080),
+      crimeEndMinute: z.number().int().min(0).max(10080),
+      crimeEventId: id,
+      crimeLocationId: id,
+      requiredCredentialId: id.nullable(),
+      culpritCredentialIds: ids,
+    }).describe("Prototype scope: a direct physical crime. All times use the timeline origin; any required credential must be held by the culprit."),
     culpritEvidence: text.describe("Two independent observable facts that identify the culprit, including provenance."),
     exclusions: z.array(z.object({
       suspectId: id,
       eventIds: z.array(id).min(1).max(6),
+      startMinute: z.number().int().min(0).max(10080),
+      endMinute: z.number().int().min(0).max(10080),
+      locationId: id,
+      continuousRecord: z.boolean().describe("True only when an independent record establishes uninterrupted presence, not endpoint observations or self-report."),
       observableProof: text.describe("Independent evidence that rules this suspect out for the entire crime window; not demeanor or self-report."),
     })).min(2).max(4),
   }),
@@ -62,7 +74,7 @@ export const DossierSchema = z.object({
 });
 export type Dossier = z.infer<typeof DossierSchema>;
 export const CaseSchema = z.object({
-  schemaVersion: z.literal(2),
+  schemaVersion: z.literal(3),
   id,
   version: z.number().int().positive(),
   truth: TruthSchema,
